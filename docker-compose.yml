@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    volumes:
+      # This volume syncs your local code to the container, so changes are reflected without rebuilding
+      - ./backend:/app
+      - ./data:/app/data
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3111:80" # Map port 80 in the container to port 3111 on your machine
+    depends_on:
+      - backend
