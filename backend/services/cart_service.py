@@ -6,16 +6,23 @@ This replaces the simple cart tracking in the agent
 
 import json
 import redis
+import os
 from typing import Dict, List, Optional
 from datetime import datetime, timedelta
 
 
 class CartService:
-    def __init__(self, redis_url: str = "redis://localhost:6379"):
+    def __init__(self, redis_url: str = None):
         """Initialize cart service with Redis connection"""
+        if redis_url is None:
+            # Use environment variable or default
+            redis_url = os.getenv("REDIS_URL", "redis://localhost:6379")
+        
         try:
-            self.redis_client = redis.from_url(
-                redis_url, decode_responses=True)
+            if redis_url.startswith("redis://"):
+                self.redis_client = redis.from_url(redis_url, decode_responses=True)
+            else:
+                self.redis_client = redis.Redis(host='localhost', port=6379, decode_responses=True)
             self.redis_client.ping()
             print("✅ Cart Service: Redis connected successfully")
         except:

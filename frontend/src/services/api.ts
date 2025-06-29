@@ -1,9 +1,11 @@
 import axios from 'axios';
 
 // Create an axios instance with a base URL for all API calls
-// Adjust the baseURL to match your backend server address
+// Use environment variable for production deployment
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+
 const apiClient = axios.create({
-  baseURL: 'http://localhost:8000',
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -83,6 +85,7 @@ export const processExpressCheckout = async (checkoutData: ExpressCheckoutReques
 
 // Finally, export the raw axios instance for any custom calls
 export const api = apiClient;
+export { apiClient };
 
 // Update the export default to include axios
 export default apiClient;

@@ -9,6 +9,7 @@ import pickle
 from langchain_core.messages import HumanMessage
 import json
 import uvicorn
+import os
 
 # Import the enhanced agent
 from agent import create_greencart_agent
@@ -23,7 +24,7 @@ from utils.message_templates import MessageTemplates
 
 app = FastAPI(title="GreenCart API")
 
-# Add CORS middleware - THIS IS THE FIX
+# Add CORS middleware with environment variable support
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -31,6 +32,7 @@ app.add_middleware(
         "http://localhost:3111",  # Your frontend URL
         "http://localhost:3001",
         "http://127.0.0.1:3111",
+        os.getenv("FRONTEND_URL", "").rstrip("/") if os.getenv("FRONTEND_URL") else "http://localhost:3111",  # Production
         "*"  # For development only - remove in production
     ],
     allow_credentials=True,

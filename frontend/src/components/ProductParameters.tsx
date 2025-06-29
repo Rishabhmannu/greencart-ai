@@ -23,7 +23,8 @@ import {
   Card,
   CardContent,
   GridLegacy as Grid,
-  Button
+  Button,
+  CircularProgress
 } from '@mui/material';
 import {
   Search,
@@ -38,7 +39,7 @@ import {
   EmojiNature
 } from '@mui/icons-material';
 import SpaIcon from '@mui/icons-material/Spa';
-import axios from 'axios';
+import { apiClient } from '../services/api';
 
 interface ProductParameter {
   product_id: number;
@@ -71,7 +72,7 @@ const ProductParameters: React.FC = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/products');
+      const response = await apiClient.get('/api/products');
       const productData = response.data.map((p: any) => ({
         product_id: p.product_id,
         product_name: p.product_name,

@@ -20,7 +20,8 @@ import {
   Tooltip,
   TextField,
   InputAdornment,
-  Zoom
+  Zoom,
+  Divider
 } from '@mui/material';
 import {
   People,
@@ -33,10 +34,15 @@ import {
   Stars,
   EmojiEvents,
   Search,
-  MyLocation
+  MyLocation,
+  Group,
+  Spa,
+  Savings,
+  AccessTime,
+  CheckCircle,
+  Warning
 } from '@mui/icons-material';
-import axios from 'axios';
-// Add this import at the top with other imports
+import { apiClient } from '../../services/api';
 import { MockGroupBuyingService } from '../../services/mockGroupBuyingData';
 
 interface GroupBuyOption {
@@ -148,7 +154,7 @@ const GroupBuyingStep: React.FC<GroupBuyingStepProps> = ({
       } else {
         console.log('Using real API...');
         // Use real API
-        const apiResponse = await axios.post('http://localhost:8000/api/group-buy/suggestions', {
+        const apiResponse = await apiClient.post('/api/group-buy/suggestions', {
           pincode: pincode,
           items: cartItems.map(item => ({
             id: item.id,

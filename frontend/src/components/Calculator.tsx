@@ -25,8 +25,9 @@ import {
   CalculateRounded as Calculate,
   Info as InfoIcon
 } from '@mui/icons-material';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { apiClient } from '../services/api';
 
 const Calculator: React.FC = () => {
   const [formState, setFormState] = useState({
@@ -50,7 +51,7 @@ const Calculator: React.FC = () => {
     setError('');
     setScore(null);
     try {
-      const response = await axios.post('http://localhost:8000/api/predict', formState);
+      const response = await apiClient.post('/api/predict', formState);
       setScore(response.data.earth_score);
     } catch {
       setError('Failed to calculate score. Please check all inputs and try again.');

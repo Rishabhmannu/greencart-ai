@@ -1,0 +1,14 @@
+# Environment files
+.env
+.env.local
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Elastic Beanstalk
+.elasticbeanstalk/
+
+# Virtual environments
+venv/
+.venv/
