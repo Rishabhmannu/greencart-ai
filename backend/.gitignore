@@ -12,3 +12,8 @@ __pycache__/
 # Virtual environments
 venv/
 .venv/
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
