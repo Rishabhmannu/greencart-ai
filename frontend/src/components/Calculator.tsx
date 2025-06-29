@@ -95,7 +95,7 @@ const Calculator: React.FC = () => {
       <Button 
         variant="outlined" 
         startIcon={<InfoIcon />}
-        onClick={() => navigate('/greencart/product-parameters')}
+        onClick={() => navigate('/product-parameters')}
         sx={{ mb: 2 }}
       >
         View Product Database

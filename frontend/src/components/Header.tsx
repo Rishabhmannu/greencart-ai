@@ -65,10 +65,6 @@ const AmazonSearchBar = styled('div')(({ theme }) => ({
   },
 }));
 
-// make sure this file lives at public/images/amazon-logo.png
-// or adjust the src path below accordingly
-const AMAZON_LOGO_SRC = '/images/amazon_black.jpg';
-
 const Header: React.FC = () => {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
@@ -101,22 +97,15 @@ const Header: React.FC = () => {
         {/* Logo (with Amazon icon added) */}
         <Box
           component={Link}
-          to="/greencart"
+          to="/"
           sx={{
             display: 'flex',
             alignItems: 'center',
             textDecoration: 'none',
             color: 'inherit',
-            mr: 4
+            mr: 2
           }}
         >
-          {/* 1) Amazon logo on the far left */}
-          <Box
-            component="img"
-            src={AMAZON_LOGO_SRC}
-            alt="Amazon"
-            sx={{ width: 48, height: 'auto', mr: 2 }}
-          />
           <SpaIcon sx={{ color: 'success.main', mr: 1, fontSize: 32 }} />
           <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
             GreenCart
@@ -140,10 +129,10 @@ const Header: React.FC = () => {
 
         {/* Navigation Links */}
         <Box sx={{ display: 'flex', alignItems: 'center', ml: 4 }}>
-          {/* 2) Green “capsule” nav buttons */}
+          {/* 2) Green "capsule" nav buttons */}
           <Button
             component={Link}
-            to="/greencart/group-buy"
+            to="/group-buy"
             variant="contained"
             color="success"
             sx={{
@@ -156,7 +145,7 @@ const Header: React.FC = () => {
           </Button>
           <Button
             component={Link}
-            to="/greencart/calculator"
+            to="/calculator"
             variant="contained"
             color="success"
             sx={{
@@ -169,7 +158,7 @@ const Header: React.FC = () => {
           </Button>
           <Button
             component={Link}
-            to="/greencart/dashboard"
+            to="/dashboard"
             variant="contained"
             color="success"
             sx={{
@@ -184,7 +173,7 @@ const Header: React.FC = () => {
           {/* Cart Icon */}
           <IconButton
             component={Link}
-            to="/greencart/cart"
+            to="/cart"
             sx={{ mx: 1 }}
           >
             <Badge badgeContent={cartItemsCount} color="success">

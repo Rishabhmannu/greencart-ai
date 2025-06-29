@@ -47,9 +47,6 @@ import ProductParameters from './components/ProductParameters';
 import { AppBar, Toolbar, Typography, Container, Button, CircularProgress, Box, ThemeProvider, createTheme } from '@mui/material';
 import './App.css';
 
-// Lazy load Amazon UI to keep bundle sizes separate
-const AmazonUIWrapper = lazy(() => import('./amazon-ui/components/AmazonUIWrapper'));
-
 // Amazon-style Material-UI Theme
 const theme = createTheme({
   palette: {
@@ -123,7 +120,7 @@ const GreenCartLayout: React.FC = () => {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      navigate('/greencart/login');
+      navigate('/login');
     } catch (error) {
       console.error('Failed to log out', error);
     }
@@ -147,7 +144,7 @@ const GreenCartLayout: React.FC = () => {
             <Typography
               variant="h6"
               component={Link}
-              to="/greencart"
+              to="/"
               sx={{ flexGrow: 1, textDecoration: 'none', color: 'inherit' }}
             >
               GreenCart
@@ -156,14 +153,14 @@ const GreenCartLayout: React.FC = () => {
             <Button
               color="inherit"
               component={Link}
-              to="/greencart/group-buy"
+              to="/group-buy"
             >
               Group Buys
             </Button>
             <Button
               color="inherit"
               component={Link}
-              to="/greencart/calculator"
+              to="/calculator"
             >
               Calculator
             </Button>
@@ -179,7 +176,7 @@ const GreenCartLayout: React.FC = () => {
                 <Button
                   color="inherit"
                   component={Link}
-                  to="/greencart/dashboard"
+                  to="/dashboard"
                 >
                   Dashboard
                 </Button>
@@ -343,13 +340,7 @@ const GreenCartLayout: React.FC = () => {
 const AppLayout: React.FC = () => {
   return (
     <Suspense fallback={<LoadingScreen />}>
-      <Routes>
-        {/* Amazon UI Routes - Default landing */}
-        <Route path="/*" element={<AmazonUIWrapper />} />
-
-        {/* GreenCart Routes - When user clicks GreenCart Zone button */}
-        <Route path="/greencart/*" element={<GreenCartLayout />} />
-      </Routes>
+      <GreenCartLayout />
     </Suspense>
   );
 };

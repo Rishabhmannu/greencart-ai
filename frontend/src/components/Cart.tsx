@@ -427,20 +427,20 @@ const Cart: React.FC = () => {
               color="success"
               size="large"
               startIcon={<Nature />}
-              onClick={() => navigate('/greencart')}
+              onClick={() => navigate('/')}
               sx={{ minWidth: 200 }}
             >
-              Shop Sustainable Products
+              Continue Shopping
             </Button>
             <Button
               variant="outlined"
               color="success"
               size="large"
               startIcon={<Calculate />}
-              onClick={() => navigate('/greencart/calculator')}
+              onClick={() => navigate('/calculator')}
               sx={{ minWidth: 300 }}
             >
-              Calculate Impact of a product via EarthScore Intelligence
+              Calculate Impact
             </Button>
           </Box>
           
@@ -465,7 +465,7 @@ const Cart: React.FC = () => {
                         bgcolor: 'action.hover'
                       }
                     }}
-                    onClick={() => navigate(`/greencart?category=${category.toLowerCase()}`)}
+                    onClick={() => navigate(`/?category=${category.toLowerCase()}`)}
                   >
                     <Box
                       component="img"

@@ -104,7 +104,7 @@ const CartPage: React.FC = () => {
               color="success"
               size="large"
               startIcon={<Leaf />}
-              onClick={() => navigate('/greencart')}
+              onClick={() => navigate('/')}
               sx={{ minWidth: 200 }}
             >
               Shop Sustainable Products
@@ -113,7 +113,7 @@ const CartPage: React.FC = () => {
               variant="outlined"
               color="success"
               size="large"
-              onClick={() => navigate('/greencart/calculator')}
+              onClick={() => navigate('/calculator')}
               sx={{ minWidth: 300 }}
             >
               Calculate Impact of a product via EarthScore Intelligence
@@ -141,7 +141,7 @@ const CartPage: React.FC = () => {
                         bgcolor: 'action.hover'
                       }
                     }}
-                    onClick={() => navigate(`/greencart?category=${category.toLowerCase()}`)}
+                    onClick={() => navigate(`/?category=${category.toLowerCase()}`)}
                   >
                     <Box
                       component="img"

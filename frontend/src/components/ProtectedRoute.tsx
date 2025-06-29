@@ -10,7 +10,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { currentUser } = useAuth();
 
   if (!currentUser) {
-    return <Navigate to="/greencart/login" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   return <>{children}</>;

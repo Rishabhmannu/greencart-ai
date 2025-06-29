@@ -283,7 +283,7 @@ const Chatbot: React.FC = () => {
         actions: products.length > 0 ? [{
           type: 'navigate' as const,
           label: 'View All Products',
-          data: { path: '/greencart' }
+          data: { path: '/' }
         }] : undefined
       };
 
