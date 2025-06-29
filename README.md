@@ -7,9 +7,11 @@
 
 ### 🤖 AI Chatbot Assistant
 ![Chatbot Demo1](./images/chatbot1.jpeg)
-![Chatbot Demo2](./images/chatbot2.jpeg)
-![Chatbot Demo3](./images/chatbot3.jpeg)
-![Chatbot Demo4](./images/chatbot4.jpeg)
+![Chatbot Demo2](./images/chatbot2.png)
+![Chatbot Demo3](./images/chatbot3.png)
+![Chatbot Demo4](./images/chatbot4.png)
+![Chatbot Demo4](./images/chatbot5.png) - Dynamic Filtering based on User Queries using Advanced NLP !
+![Chatbot Demo4](./images/chatbot6.png) - Xpress Checkout Option directly from within the Chatbot itself !!
 
 ### 📊 User Impact Dashboard
 ![Impact Dashboard](./images/dashboard.jpeg)
@@ -80,6 +82,13 @@ GreenCart is an innovative e-commerce platform that gamifies sustainable shoppin
 🌐 **Frontend**: http://44.201.166.99:3111/  
 🔧 **Backend API**: http://44.201.166.99:8000/docs
 
+## Login Info
+
+- Users can register with any email and password, an email with confirmation code will be used to authenticate the user via SendGrid Email api by Twilio.
+- Default account credentials:
+  - **Username**: iit2022131@iiita.ac.in
+  - **Password**: password
+
 ## 🛠️ Technology Stack
 
 ### Frontend
@@ -94,7 +103,7 @@ GreenCart is an innovative e-commerce platform that gamifies sustainable shoppin
 - **Framework**: FastAPI (Python 3.10+)
 - **AI/ML**: 
   - LangGraph for multi-agent orchestration
-  - Google Gemini 1.5 Pro for NLP
+  - Google Gemini 1.5 Pro/ OpenAI GPT-4 Models for NLP
   - scikit-learn for clustering and predictions
 - **Database**: 
   - Redis for cart persistence
@@ -274,7 +283,7 @@ We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 👥 Team
- We areFull Stack Developers & AI Integrators, UI/UX Designer and Backend Developers
+ We are Full Stack Developers & AI Integrators, UI/UX Designer and Backend Developers
 - **Rishabh Kumar** 
 - **Nikhil Chauhan** 
 - **Sridhar Vasudevan** 
@@ -283,6 +292,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - Amazon Web Services for hosting infrastructure
 - Google Cloud for Gemini API access
+- OpenAI SDK for API Access
 - The open-source community for amazing tools and libraries
 - Environmental data providers for sustainability metrics
 

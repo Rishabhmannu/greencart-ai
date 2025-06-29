@@ -14,29 +14,33 @@ class GroupBuyClusteringService:
         try:
             # Read the CSV file
             self.users_df = pd.read_csv(users_file_path)
-
-            # Process categories - assuming they're in category1 and category2 columns
+            
+            # Create a new column for preferred_categories as a list
+            preferred_categories_list = []
+            
             for index, row in self.users_df.iterrows():
                 categories = []
-
+                
                 # Check for category1 and category2 columns
                 if 'category1' in self.users_df.columns and pd.notna(row['category1']):
                     categories.append(row['category1'])
                 if 'category2' in self.users_df.columns and pd.notna(row['category2']):
                     categories.append(row['category2'])
-
+                
                 # If old format (categories in columns after longitude), handle that too
                 if not categories:
                     # Try to get categories from columns after the standard ones
                     for col in self.users_df.columns[5:]:
                         if pd.notna(row[col]) and col != 'preferred_categories':
                             categories.append(row[col])
-
-                # Store as a list in the DataFrame
-                self.users_df.at[index, 'preferred_categories'] = categories
-
+                
+                preferred_categories_list.append(categories)
+            
+            # Add the new column to the DataFrame
+            self.users_df['preferred_categories'] = preferred_categories_list
+            
             print(f"Loaded {len(self.users_df)} users from {users_file_path}")
-
+            
         except Exception as e:
             print(f"Error loading users file: {e}")
             # Create a default DataFrame if file not found

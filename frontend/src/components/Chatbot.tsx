@@ -31,6 +31,7 @@ import NatureIcon from '@mui/icons-material/Nature';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import InfoIcon from '@mui/icons-material/Info';
+import FlashOn from '@mui/icons-material/FlashOn';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -38,6 +39,9 @@ import { useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import ProductDetailDialog from './ProductDetailDialog';
+import FilterBadge from './FilterBadge';
+import ExpressCheckoutModal from './ExpressCheckoutModal';
+import { ExpressCheckoutItem } from '../types/checkout.types';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
@@ -98,6 +102,16 @@ const Chatbot: React.FC = () => {
   });
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
 
+  // Add new state variables for filters and express checkout
+  const [activeFilters, setActiveFilters] = useState<{
+    category?: string;
+    earth_score_min?: number;
+    earth_score_max?: number;
+  }>({});
+
+  const [expressCheckoutItem, setExpressCheckoutItem] = useState<ExpressCheckoutItem | null>(null);
+  const [expressCheckoutOpen, setExpressCheckoutOpen] = useState(false);
+
   // Add diagnostic useEffect
   useEffect(() => {
     console.log("Chatbot mounted. API URL:", API_URL);
@@ -156,9 +170,29 @@ const Chatbot: React.FC = () => {
   };
 
   const extractProductsFromResponse = (response: any): Product[] => {
+    // Check if we have filters applied in the response
+    if (response.filters_applied) {
+      setActiveFilters(response.filters_applied);
+    }
+
     // If the response contains structured product data from backend
     if (response.products && Array.isArray(response.products)) {
-      return response.products;
+      return response.products.map((p: any) => ({
+        product_id: p.product_id || p.id,
+        product_name: p.product_name || p.name,
+        price: p.price || 0,
+        earth_score: p.earth_score || p.earthScore || 0,
+        category: p.category,
+        image_url: p.image_url || p.image,
+        manufacturing_emissions_gco2e: p.manufacturing_emissions_gco2e,
+        transport_distance_km: p.transport_distance_km,
+        recyclability_percent: p.recyclability_percent,
+        biodegradability_score: p.biodegradability_score,
+        is_fair_trade: p.is_fair_trade,
+        supply_chain_transparency_score: p.supply_chain_transparency_score,
+        durability_rating: p.durability_rating,
+        repairability_index: p.repairability_index
+      }));
     }
 
     // Fallback: parse from text (improved regex)
@@ -332,6 +366,36 @@ const Chatbot: React.FC = () => {
     setDetailDialogOpen(true);
   };
 
+  // Add handler for express checkout
+  const handleExpressCheckout = (product: Product) => {
+    const checkoutItem: ExpressCheckoutItem = {
+      product_id: product.product_id,
+      product_name: product.product_name,
+      price: product.price,
+      quantity: 1,
+      earth_score: product.earth_score,
+      image_url: product.image_url || getCategoryImage(product.category)
+    };
+    
+    setExpressCheckoutItem(checkoutItem);
+    setExpressCheckoutOpen(true);
+  };
+
+  // Add handler for removing filters
+  const handleRemoveFilter = (filterType: string) => {
+    setActiveFilters(prev => {
+      const newFilters = { ...prev };
+      if (filterType === 'category') {
+        delete newFilters.category;
+      } else if (filterType === 'earth_score') {
+        delete newFilters.earth_score_min;
+      } else if (filterType === 'earth_score_max') {
+        delete newFilters.earth_score_max;
+      }
+      return newFilters;
+    });
+  };
+
   const handleAction = (action: ChatAction) => {
     switch (action.type) {
       case 'navigate':
@@ -379,25 +443,43 @@ const Chatbot: React.FC = () => {
           </Typography>
         )}
       </CardContent>
-      <CardActions>
+      <CardActions sx={{ display: 'flex', flexDirection: 'column', gap: 1, px: 2, pb: 2 }}>
+        <Box sx={{ display: 'flex', gap: 1, width: '100%' }}>
+          <Button
+            size="small"
+            variant="contained"
+            color="success"
+            startIcon={<AddShoppingCartIcon />}
+            onClick={() => handleAddToCart(product)}
+            sx={{ flex: 1 }}
+          >
+            Add to Cart
+          </Button>
+          <Button
+            size="small"
+            variant="outlined"
+            startIcon={<InfoIcon />}
+            onClick={() => handleViewDetails(product)}
+            sx={{ flex: 1 }}
+          >
+            Details
+          </Button>
+        </Box>
+        
+        {/* Express Checkout Button */}
         <Button
           size="small"
           variant="contained"
-          color="success"
-          startIcon={<AddShoppingCartIcon />}
-          onClick={() => handleAddToCart(product)}
+          color="primary"
+          startIcon={<FlashOn />}
+          onClick={() => handleExpressCheckout(product)}
           fullWidth
+          sx={{
+            background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+            boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+          }}
         >
-          Add to Cart
-        </Button>
-        <Button
-          size="small"
-          variant="outlined"
-          startIcon={<InfoIcon />}
-          onClick={() => handleViewDetails(product)}
-          fullWidth
-        >
-          View Details
+          Xpress Checkout
         </Button>
       </CardActions>
     </Card>
@@ -421,6 +503,16 @@ const Chatbot: React.FC = () => {
               Your sustainable shopping companion
             </Typography>
           </Paper>
+
+          {/* Filter Badge Display */}
+          {Object.keys(activeFilters).length > 0 && (
+            <Box sx={{ px: 2, pt: 1 }}>
+              <FilterBadge 
+                filters={activeFilters} 
+                onRemoveFilter={handleRemoveFilter} 
+              />
+            </Box>
+          )}
 
           <List sx={{ flexGrow: 1, overflowY: 'auto', p: 2 }}>
             {messages.map((msg, index) => (
@@ -588,6 +680,27 @@ const Chatbot: React.FC = () => {
           {snackbar.message}
         </Alert>
       </Snackbar>
+
+      {/* Express Checkout Modal */}
+      {expressCheckoutItem && (
+        <ExpressCheckoutModal
+          open={expressCheckoutOpen}
+          onClose={() => {
+            setExpressCheckoutOpen(false);
+            setExpressCheckoutItem(null);
+          }}
+          item={expressCheckoutItem}
+          onSuccess={(orderId) => {
+            setSnackbar({
+              open: true,
+              message: `🎉 Order ${orderId} placed successfully! Your eco-friendly purchase is on its way.`,
+              severity: 'success'
+            });
+            setExpressCheckoutOpen(false);
+            setExpressCheckoutItem(null);
+          }}
+        />
+      )}
     </>
   );
 };

@@ -2,7 +2,8 @@
 """
 Shopping Assistant Agent - Handles product searches and recommendations
 """
-
+from services.filter_service import ProductFilterService
+from utils.message_templates import MessageTemplates
 from typing import Dict, List, Optional
 import json
 import pandas as pd
@@ -29,6 +30,11 @@ class ShoppingAssistantAgent:
     def search_products(self, query: str, products_df: pd.DataFrame,
                         filters: Optional[Dict] = None) -> List[Dict]:
         """Enhanced search with category support and natural language processing"""
+        
+        # If filters are provided, use them
+        if filters:
+            filter_service = ProductFilterService(products_df)
+            return filter_service.filter_products(**filters)
         
         # Category mapping for natural language
         category_keywords = {
@@ -167,7 +173,7 @@ Or ask me to show you our highest-rated eco-friendly products!"""
 
     def handle_request(self, message: str, products_df: pd.DataFrame,
                        user_context: Optional[Dict] = None) -> Dict:
-        """Handle a shopping request"""
+        """Handle a shopping request with enhanced filtering"""
 
         # Check for specific product requests
         if "add" in message.lower() and "cart" in message.lower():
@@ -179,14 +185,59 @@ Or ask me to show you our highest-rated eco-friendly products!"""
                 "agent": "shopping_assistant"
             }
 
-        # Search for products
-        products = self.search_products(message, products_df)
+        # Initialize filter service
+        filter_service = ProductFilterService(products_df)
 
-        # Generate response
-        response = self.generate_response(message, products, user_context)
+        # Parse the query for filters
+        filters = filter_service.parse_filter_query(message)
+
+        # If filters were detected, use the filter service
+        if filters:
+            products = filter_service.filter_products(**filters)
+
+            # Get contextual message based on filters
+            context_message = MessageTemplates.get_filter_message(
+                category=filters.get('category'),
+                score=filters.get('earth_score_min')
+            )
+
+            # Generate response with filtered products
+            if products:
+                response = f"{context_message}\n\n"
+
+                # Add product details
+                for i, product in enumerate(products[:5], 1):
+                    earth_score = product.get('earth_score', 'N/A')
+
+                    # Add emoji based on earth score
+                    if isinstance(earth_score, (int, float)):
+                        if earth_score >= 80:
+                            emoji = "🌟"
+                        elif earth_score >= 60:
+                            emoji = "✅"
+                        else:
+                            emoji = "⭕"
+                    else:
+                        emoji = "📦"
+
+                    response += f"{i}. {emoji} **{product['product_name']}** - ${product['price']:.2f} (EarthScore: {earth_score}/100)\n"
+
+                # Add action suggestions
+                response += "\n\nWould you like to:"
+                response += "\n• See more details about any product"
+                response += "\n• Add items to your cart"
+                response += "\n• Filter by a different EarthScore range"
+                response += "\n• Browse a different category"
+            else:
+                response = f"No products found with those filters. Try adjusting your criteria!"
+        else:
+            # Use the existing search logic for non-filter queries
+            products = self.search_products(message, products_df)
+            response = self.generate_response(message, products, user_context)
 
         return {
             "response": response,
             "products": products,
-            "agent": "shopping_assistant"
+            "agent": "shopping_assistant",
+            "filters_applied": filters if filters else None
         }

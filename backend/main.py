@@ -4,7 +4,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
 from pydantic import BaseModel
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Any
 import pickle
 from langchain_core.messages import HumanMessage
 import json
@@ -17,9 +17,9 @@ from agent import create_greencart_agent
 from services.cart_service import CartService
 from services.group_buy_service import GroupBuyService
 from clustering_service import GroupBuyClusteringService
-
-clustering_service = GroupBuyClusteringService('../data/users_pincodes.csv')
-
+from services.filter_service import ProductFilterService
+from services.express_checkout_service import ExpressCheckoutService
+from utils.message_templates import MessageTemplates
 
 app = FastAPI(title="GreenCart API")
 
@@ -37,6 +37,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 # Global variables
 products_df = None
 agent = None
@@ -44,13 +45,14 @@ imputer = None
 model = None
 cart_service = None
 group_buy_service = None
+clustering_service = None
+filter_service = None
+express_checkout_service = None
 
 # Startup Event
-
-
 @app.on_event("startup")
 def startup_event():
-    global products_df, agent, imputer, model, cart_service, group_buy_service
+    global products_df, agent, imputer, model, cart_service, group_buy_service, clustering_service, filter_service, express_checkout_service
 
     # Load product data
     products_df = pd.read_csv("../data/products_large.csv")
@@ -66,6 +68,9 @@ def startup_event():
     # Initialize services
     cart_service = CartService()
     group_buy_service = GroupBuyService()
+    clustering_service = GroupBuyClusteringService('../data/users_pincodes.csv')
+    filter_service = ProductFilterService(products_df)
+    express_checkout_service = ExpressCheckoutService()
     print("✅ Services initialized")
 
     # Create enhanced agent
@@ -94,6 +99,33 @@ def get_product_by_id(product_id: int):
         raise HTTPException(
             status_code=404, detail=f"Product {product_id} not found")
     return product.iloc[0].to_dict()
+
+# Enhanced products endpoint with filtering
+@app.get("/api/products/filter")
+def filter_products(
+    category: Optional[str] = None,
+    earth_score_min: Optional[int] = None,
+    earth_score_max: Optional[int] = None,
+    sort_by: str = "earth_score",
+    limit: int = 20
+):
+    """Get filtered products"""
+    filtered = filter_service.filter_products(
+        category=category,
+        earth_score_min=earth_score_min,
+        earth_score_max=earth_score_max,
+        sort_by=sort_by,
+        limit=limit
+    )
+    return {
+        "products": filtered,
+        "count": len(filtered),
+        "filters_applied": {
+            "category": category,
+            "earth_score_min": earth_score_min,
+            "earth_score_max": earth_score_max
+        }
+    }
 
 # Cart endpoints
 
@@ -127,6 +159,50 @@ def add_to_cart_api(user_id: str, product_id: int, quantity: int = 1):
 def remove_from_cart(user_id: str, product_id: int):
     """Remove item from cart"""
     return cart_service.remove_from_cart(user_id, product_id)
+
+# Express checkout endpoint
+class ExpressCheckoutRequest(BaseModel):
+    user_id: str
+    items: List[Dict[str, Any]]
+    shipping_address: Dict[str, str]
+    payment_method: str = "credit_card"
+
+@app.post("/api/express-checkout")
+def express_checkout(request: ExpressCheckoutRequest):
+    """Process express checkout"""
+    # Validate address
+    if not express_checkout_service.validate_shipping_address(request.shipping_address):
+        raise HTTPException(status_code=400, detail="Invalid shipping address")
+    
+    # Create order
+    order = express_checkout_service.create_express_order(
+        user_id=request.user_id,
+        cart_items=request.items,
+        shipping_address=request.shipping_address,
+        payment_method=request.payment_method
+    )
+    
+    # Process payment (mock)
+    payment_result = express_checkout_service.process_payment(
+        amount=order.total_amount,
+        payment_method=request.payment_method
+    )
+    
+    if not payment_result["success"]:
+        raise HTTPException(status_code=400, detail="Payment failed")
+    
+    return {
+        "success": True,
+        "order_id": order.order_id,
+        "total": order.total_amount,
+        "earth_score": order.total_earth_score,
+        "co2_saved": order.estimated_co2_saved,
+        "transaction_id": payment_result["transaction_id"],
+        "message": MessageTemplates.get_product_selected_message(
+            earth_score=int(order.total_earth_score),
+            co2_saved=order.estimated_co2_saved
+        )
+    }
 
 # Group buy endpoints
 
