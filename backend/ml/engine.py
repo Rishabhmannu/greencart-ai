@@ -86,7 +86,7 @@ if __name__ == "__main__":
 
     # Load the data from the relative path
     try:
-        products_df = pd.read_csv("../../data/products.csv")
+        products_df = pd.read_csv("../data/products.csv")
         print(f"Successfully loaded {len(products_df)} products.")
     except FileNotFoundError:
         print("Error: `products.csv` not found. Make sure it's in the `data` directory.")

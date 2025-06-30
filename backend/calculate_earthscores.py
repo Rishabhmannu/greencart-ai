@@ -12,7 +12,7 @@ def add_earthscores_to_csv():
 
     # Load the products
     print("Loading products...")
-    products_df = pd.read_csv("../data/products_large.csv")
+    products_df = pd.read_csv("data/products_large.csv")
     print(f"Loaded {len(products_df)} products")
 
     # Check current columns
@@ -37,14 +37,14 @@ def add_earthscores_to_csv():
 
     # Save back to CSV
     print("\nSaving to CSV...")
-    products_df.to_csv("../data/products_large_with_scores.csv", index=False)
+    products_df.to_csv("data/products_large_with_scores.csv", index=False)
     print("✅ Saved to products_large_with_scores.csv")
 
     # Also update the original file (make a backup first)
     import shutil
-    shutil.copy("../data/products_large.csv",
-                "../data/products_large_backup.csv")
-    products_df.to_csv("../data/products_large.csv", index=False)
+    shutil.copy("data/products_large.csv",
+                "data/products_large_backup.csv")
+    products_df.to_csv("data/products_large.csv", index=False)
     print("✅ Updated original products_large.csv (backup saved as products_large_backup.csv)")
 
     # Show top 10 eco-friendly products

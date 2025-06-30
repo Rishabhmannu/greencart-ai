@@ -68,7 +68,7 @@ def fix_product_categories():
     # Read the CSV file
     print("Reading products_large.csv...")
     try:
-        df = pd.read_csv('../data/products_large.csv')
+        df = pd.read_csv('data/products_large.csv')
         print(f"✓ Loaded {len(df)} products")
     except FileNotFoundError:
         print("❌ Error: Could not find products_large.csv")
@@ -82,7 +82,7 @@ def fix_product_categories():
         print(f"  {cat}: {count} products")
 
     # Create backup
-    backup_file = '../data/products_large_backup.csv'
+    backup_file = 'data/products_large_backup.csv'
     print(f"\n💾 Creating backup at {backup_file}")
     df.to_csv(backup_file, index=False)
 
@@ -118,11 +118,11 @@ def fix_product_categories():
     print("\n💾 Saving updated products_large.csv...")
     # Remove the temporary original_category column before saving
     df_to_save = df.drop(columns=['original_category'])
-    df_to_save.to_csv('../data/products_large.csv', index=False)
+    df_to_save.to_csv('data/products_large.csv', index=False)
 
     print("\n✅ Done! Categories have been fixed.")
     print(f"   Backup saved as: {backup_file}")
-    print(f"   Updated file: ../data/products_large.csv")
+    print(f"   Updated file: data/products_large.csv")
 
     # Show sample products for verification
     print("\n📋 Sample products with new categories:")

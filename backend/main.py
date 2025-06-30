@@ -57,7 +57,7 @@ def startup_event():
     global products_df, agent, imputer, model, cart_service, group_buy_service, clustering_service, filter_service, express_checkout_service
 
     # Load product data
-    products_df = pd.read_csv("../data/products_large.csv")
+    products_df = pd.read_csv("data/products_large.csv")
     print(f"✅ Product data loaded: {len(products_df)} items")
 
     # Load ML models
@@ -70,7 +70,7 @@ def startup_event():
     # Initialize services
     cart_service = CartService()
     group_buy_service = GroupBuyService()
-    clustering_service = GroupBuyClusteringService('../data/users_pincodes.csv')
+    clustering_service = GroupBuyClusteringService('data/users_pincodes.csv')
     filter_service = ProductFilterService(products_df)
     express_checkout_service = ExpressCheckoutService()
     print("✅ Services initialized")

@@ -14,7 +14,7 @@ def fix_users_categories():
 
     # Read the current users file
     print("Reading users_pincodes.csv...")
-    users_file = '../data/users_pincodes.csv'
+    users_file = 'data/users_pincodes.csv'
 
     # First, let's read it as raw text to understand the structure
     with open(users_file, 'r') as f:
@@ -109,7 +109,7 @@ def fix_users_categories():
     new_users_df = pd.concat([new_users_df, additional_df], ignore_index=True)
 
     # Create backup
-    backup_file = '../data/users_pincodes_backup.csv'
+    backup_file = 'data/users_pincodes_backup.csv'
     print(f"\n💾 Creating backup at {backup_file}")
 
     # Save original file as backup

@@ -17,7 +17,7 @@ def test_complete_shopping_flow():
     agent = create_greencart_agent()
 
     # Load product data
-    products_df = pd.read_csv("../data/products_large.csv")
+    products_df = pd.read_csv("data/products_large.csv")
 
     # Test conversation
     queries = [

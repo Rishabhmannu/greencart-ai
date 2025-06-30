@@ -11,7 +11,7 @@ def test_clustering():
 
     # Initialize service
     print("Initializing clustering service...")
-    service = GroupBuyClusteringService('../../data/users_pincodes.csv')
+    service = GroupBuyClusteringService('../data/users_pincodes.csv')
 
     print("\n" + "="*50)
     print("CLUSTERING SERVICE TEST")

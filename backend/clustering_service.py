@@ -9,7 +9,7 @@ import csv
 
 
 class GroupBuyClusteringService:
-    def __init__(self, users_file_path: str = '../data/users_pincodes.csv'):
+    def __init__(self, users_file_path: str = 'data/users_pincodes.csv'):
         """Initialize with users data"""
         try:
             # Read the CSV file
